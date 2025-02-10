@@ -1,9 +1,9 @@
 class CommentsController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_project
 
   def create
-    @project = Project.find(params[:project_id])
-    @comment = @project.comments.new(comment_params)
+    @comment = @project.comments.build(comment_params)
     @comment.user = current_user
 
     if @comment.save
@@ -13,15 +13,13 @@ class CommentsController < ApplicationController
     end
   end
 
-  def destroy
-    @comment = Comment.find(params[:id])
-    @comment.destroy
-    redirect_to @comment.project, notice: "Comment deleted."
-  end
-
   private
 
+  def set_project
+    @project = Project.find(params[:project_id])
+  end
+
   def comment_params
-    params.require(:comment).permit(:content)
+    params.require(:comment).permit(:comment)
   end
 end

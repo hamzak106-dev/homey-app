@@ -1,20 +1,13 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { registrations: 'users/registrations' }
 
-  # Redirect root to Dashboard after login
-  authenticated :user do
-    root 'dashboard#index', as: :authenticated_root
-  end
-
-  root 'welcome#index'
+  root 'dashboard#index', as: :authenticated_root
 
   # Dashboard
   get 'dashboard', to: 'dashboard#index'
 
-  # Projects
+  # Projects with nested comments
   resources :projects do
     resources :comments, only: [:create, :destroy]
   end
-
-  # Other routes
 end

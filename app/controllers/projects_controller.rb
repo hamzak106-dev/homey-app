@@ -6,8 +6,10 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @project = current_user.projects.find(params[:id])
+    @project = Project.find(params[:id])
+    @comments = @project.comments.includes(:user).order(created_at: :desc)
   end
+  
 
   def new
     @project = current_user.projects.new
@@ -31,7 +33,7 @@ class ProjectsController < ApplicationController
     if @project.update(project_params)
       redirect_to @project, notice: "Project updated successfully."
     else
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 

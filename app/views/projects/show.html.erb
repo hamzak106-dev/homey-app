@@ -12,10 +12,50 @@
             <%= @project.user.present? ? "#{@project.user.first_name} #{@project.user.last_name}" : "Unknown" %>
           </p>
           <hr>
-          <div class="d-flex justify-content-between">
-            <%= link_to "Edit", edit_project_path(@project), class: "btn btn-warning" %>
-            <%= link_to "Back to Projects", projects_path, class: "btn btn-secondary" %>
-          </div>
+          <% if current_user == @project.user %>
+            <div class="d-flex justify-content-between">
+              <%= link_to "Edit", edit_project_path(@project), class: "btn btn-warning" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Comments Section -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h4>Comments</h4>
+        </div>
+        <div class="card-body">
+          <% if @project.comments.any? %>
+            <ul class="list-group">
+              <% @project.comments.each do |comment| %>
+                <li class="list-group-item">
+                  <strong><%= comment.user.first_name %> <%= comment.user.last_name %>:</strong>
+                  <p class="mb-0"><%= comment.comment %></p>
+                  <small class="text-muted"><%= time_ago_in_words(comment.created_at) %> ago</small>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <p class="text-muted">No comments yet.</p>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Add New Comment -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h4>Add a Comment</h4>
+        </div>
+        <div class="card-body">
+          <%= form_with(model: [@project, Comment.new], local: true) do |f| %>
+            <div class="mb-3">
+              <%= f.text_area :comment, class: "form-control", placeholder: "Write your comment here...", rows: 3 %>
+            </div>
+            <div class="d-grid">
+              <%= f.submit "Post Comment", class: "btn btn-primary" %>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
